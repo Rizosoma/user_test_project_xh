@@ -11,7 +11,7 @@
 ## Установка
 
 1. Клонируйте репозиторий:
-   git clone https://github.com/Rizosoma/user-test-project.git
+   git clone https://github.com/Rizosoma/user_test_project_xh.git
 2. Установите зависимости с помощью Composer:
    composer install
 
