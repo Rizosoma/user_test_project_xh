@@ -11,7 +11,7 @@
 ## Установка
 
 1. Клонируйте репозиторий:
-   git clone https://github.com/Rizosoma/user_test_project_xh.git
+   git clone https://github.com/yourusername/user-test-project.git
 2. Установите зависимости с помощью Composer:
    composer install
 
@@ -53,5 +53,20 @@ OK (7 tests, 15 assertions)
    Email: testuser123@example.com  
 3. Запись в логах:  
    [2023-03-19T18:29:23.832272+00:00] user_test_project.INFO: User created {"id":44,"name":"testuser123","email":"testuser123@example.com"} []
+4. Запуск скрипта с параметрами: неуникальное имя.  
+   --name=testuser500 --email=testuser500@mail.com  
+   PHP Fatal error:  Uncaught InvalidArgumentException: Name is already taken
+5. Запуск скрипта с параметрами: короткое имя и неуникальный email.  
+   php scripts/testCreateUser.php --name=testus --email=testuser500@mail.com  
+   PHP Fatal error:  Uncaught InvalidArgumentException: Invalid name  
+   Email is already taken in /Users/kara/PhpstormProjects/UserTestProject/src/User/UserRepository.php:249
+6. Запуск скрипта с параметрами: некорректный email.  
+   php scripts/testCreateUser.php --name=testuser600 --email=testuse@r500@mail.com  
+   PHP Fatal error:  Uncaught InvalidArgumentException: Invalid email
+7. Запуск скрипта с параметрами: имя содержит запрещённое значение.  
+   php scripts/testCreateUser.php --name=testuser600admin --email=testuser600@mail.com  
+   PHP Fatal error:  Uncaught InvalidArgumentException: Invalid name
+
+
 
 
