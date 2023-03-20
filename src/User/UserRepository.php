@@ -30,20 +30,26 @@ class UserRepository implements UserRepositoryInterface
      * @var Config
      */
     private $config;
+    /**
+     * @var UserValidatorInterface
+     */
+    private $validator;
 
 
     /**
      * UserRepository constructor
      *
-     * @param PDO             $pdo
-     * @param LoggerInterface $logger
-     * @param Config          $config
+     * @param PDO                    $pdo
+     * @param LoggerInterface        $logger
+     * @param Config                 $config
+     * @param UserValidatorInterface $validator
      */
-    public function __construct(PDO $pdo, LoggerInterface $logger, Config $config)
+    public function __construct(PDO $pdo, LoggerInterface $logger, Config $config, UserValidatorInterface $validator)
     {
         $this->pdo    = $pdo;
         $this->logger = $logger;
         $this->config = $config;
+        $this->validator = $validator;
     }
 
 
@@ -242,9 +248,15 @@ class UserRepository implements UserRepositoryInterface
      */
     private function validateUser(User $user): void
     {
-        $restrictedNames   = $this->config->get('restrictedNames');
-        $restrictedDomains = $this->config->get('restrictedDomains');
-        $errors            = (new UserValidator($this, $restrictedNames, $restrictedDomains))->validate($user);
+        if (!$this->isNameUnique($user->getName(), $user->getId())) {
+            throw new InvalidArgumentException('Name is already taken');
+        }
+
+        if (!$this->isEmailUnique($user->getEmail(), $user->getId())) {
+            throw new InvalidArgumentException('Email is already taken');
+        }
+
+        $errors = $this->validator->validate($user);
         if (!empty($errors)) {
             throw new InvalidArgumentException(implode("\n", $errors));
         }

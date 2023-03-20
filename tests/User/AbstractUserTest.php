@@ -10,6 +10,7 @@ use UserTestProject\Database\DatabaseConnection;
 use UserTestProject\Log\Logger;
 use UserTestProject\Config;
 use UserTestProject\User\UserRepository;
+use UserTestProject\User\UserValidator;
 
 /**
  * Abstract user test class
@@ -35,7 +36,8 @@ abstract class AbstractUserTest extends TestCase
         $this->userRepository = new UserRepository(
             $this->getTestDatabaseConnection(),
             new Logger(),
-            new Config(__DIR__ . '/../../config/settings.php')
+            new Config(__DIR__ . '/../../config/settings.php'),
+            new UserValidator()
         );
     }
 

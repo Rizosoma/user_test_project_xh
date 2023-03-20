@@ -13,16 +13,21 @@ use UserTestProject\User\User;
 use UserTestProject\User\UserRepository;
 use UserTestProject\Log\Logger;
 use UserTestProject\Config;
+use UserTestProject\User\UserValidator;
 
 $options = getopt('', ['name:', 'email:']);
 $name = empty($options['name'])? '' : $options['name'];
 $email = empty($options['email'])? '' : $options['email'];
 
 $databaseConnection = DatabaseConnection::getInstance();
+$config = new Config(__DIR__.'/../config/settings.php');
+$restrictedNames   = $config->get('restrictedNames');
+$restrictedDomains = $config->get('restrictedDomains');
 $userRepository = new UserRepository(
     $databaseConnection,
     new Logger(),
-    new Config(__DIR__.'/../config/settings.php')
+    $config,
+    new UserValidator($restrictedNames, $restrictedDomains)
 );
 
 $user = new User($name, $email);

@@ -9,7 +9,7 @@ use DateTime;
 /**
  * UserValidator class
  */
-class UserValidator
+class UserValidator implements UserValidatorInterface
 {
 
     /**
@@ -21,11 +21,6 @@ class UserValidator
      * @var array
      */
     private $restrictedDomains;
-
-    /**
-     * @var UserRepositoryInterface
-     */
-    private $userRepository;
     /**
      * @var int
      */
@@ -39,16 +34,13 @@ class UserValidator
     /**
      * UserValidator constructor
      *
-     * @param UserRepositoryInterface $userRepository
      * @param array<string>           $restrictedWords
      * @param array<string>           $restrictedDomains
      */
     public function __construct(
-        UserRepositoryInterface $userRepository,
         array $restrictedWords = [],
         array $restrictedDomains = []
     ) {
-        $this->userRepository    = $userRepository;
         $this->restrictedWords   = $restrictedWords;
         $this->restrictedDomains = $restrictedDomains;
     }
@@ -66,14 +58,10 @@ class UserValidator
 
         if (!$this->validateName($user->getName())) {
             $errors[] = 'Invalid name';
-        } elseif (!$this->isNameUnique($user->getName(), $user->getId())) {
-            $errors[] = 'Name is already taken';
         }
 
         if (!$this->validateEmail($user->getEmail())) {
             $errors[] = 'Invalid email';
-        } elseif (!$this->isEmailUnique($user->getEmail(), $user->getId())) {
-            $errors[] = 'Email is already taken';
         }
 
         if ($user->getDeleted() !== null && !$this->validateDeletedDate($user->getCreated(), $user->getDeleted())) {
@@ -137,31 +125,5 @@ class UserValidator
     private function validateDeletedDate(DateTime $created, DateTime $deleted): bool
     {
         return $deleted >= $created;
-    }
-
-
-    /**
-     * Check unique name
-     *
-     * @param  string       $name
-     * @param  integer|null $excludeUserId
-     * @return boolean
-     */
-    public function isNameUnique(string $name, ?int $excludeUserId = null): bool
-    {
-        return $this->userRepository->isNameUnique($name, $excludeUserId);
-    }
-
-
-    /**
-     *  Check unique email
-     *
-     * @param  string       $email
-     * @param  integer|null $excludeUserId
-     * @return boolean
-     */
-    public function isEmailUnique(string $email, ?int $excludeUserId = null): bool
-    {
-        return $this->userRepository->isEmailUnique($email, $excludeUserId);
     }
 }
