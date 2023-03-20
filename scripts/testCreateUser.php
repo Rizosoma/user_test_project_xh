@@ -14,8 +14,6 @@ use UserTestProject\User\UserRepository;
 use UserTestProject\Log\Logger;
 use UserTestProject\Config;
 
-$arguments = $_SERVER['argv'];
-
 $options = getopt('', ['name:', 'email:']);
 $name = empty($options['name'])? '' : $options['name'];
 $email = empty($options['email'])? '' : $options['email'];
